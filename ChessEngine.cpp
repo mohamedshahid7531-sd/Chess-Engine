@@ -7,7 +7,7 @@
 #include <vector>
 #include <chrono>
 
-// --- CORE ENGINE DEFINITIONS ---
+//  CORE DEFINITIONS 
 enum NamedBitboard {
     W_PAWNS, W_KNIGHTS, W_BISHOPS, W_ROOKS, W_QUEENS, W_KING,
     B_PAWNS, B_KNIGHTS, B_BISHOPS, B_ROOKS, B_QUEENS, B_KING
@@ -61,7 +61,7 @@ public:
     }
 };
 
-// --- BOARD SYSTEM ---
+// THE BOARD SYSTEM 
 struct BoardState {
     uint64_t bitboards[12];
     uint64_t occupancies[3];
@@ -128,7 +128,7 @@ public:
             else if (c == '-') break;
         }
         
-        // Parse En Passant
+        //  En Passant
         if (fen[i] == ' ') i++; 
         if (i < fen.length() && fen[i] != '-') {
             int file = fen[i] - 'a';
@@ -144,7 +144,7 @@ public:
     }
 };
 
-// --- EVALUATION SYSTEM ---
+//  EVALUATION OF PIECES
 class Evaluation {
 public:
     static const int pawnValue = 100;
@@ -211,7 +211,7 @@ private:
     }
 };
 
-// --- GLOBAL MOVE GENERATION SYSTEM ---
+//  MOVE GENERATION SYSTEM 
 class MoveGenerator {
 private:
     uint64_t knightAttacks[64];
@@ -236,7 +236,8 @@ private:
             for (int f = -1; f <= 1; f++) {
                 if (r == 0 && f == 0) continue;
                 int tr = rank + r, tf = file + f;
-                if (tr >= 0 && tr < 8 && tf >= 0 && tf < 8) attacks |= (1ULL << (tr * 8 + f));
+                // Changed 'f' to 'tf' below to properly map the destination coordinate
+                if (tr >= 0 && tr < 8 && tf >= 0 && tf < 8) attacks |= (1ULL << (tr * 8 + tf));
             }
         }
         return attacks;
@@ -508,7 +509,7 @@ public:
     }
 };
 
-// --- SEARCH ENGINE MECHANICS ---
+// SEARCH ENGINE MECHANICS 
 class Search {
 private:
     MoveGenerator generator;
@@ -641,7 +642,7 @@ public:
             }
         }
 
-        // Sweeper check to clear destination overlaps on enemy arrays
+        // Sweeper checks to clear destination overlaps on enemy arrays
         int enemyStart = (current.sideToMove == WHITE) ? B_PAWNS : W_PAWNS;
         int enemyEnd = (current.sideToMove == WHITE) ? B_KING : W_KING;
         for (int p = enemyStart; p <= enemyEnd; p++) {
@@ -781,7 +782,7 @@ public:
     }
 };
 
-// --- UCI ENGINE LOOP ---
+// UCI ENGINE LOOP 
 void uciLoop() {
     std::setvbuf(stdin, NULL, _IONBF, 0);
     std::setvbuf(stdout, NULL, _IONBF, 0);
